@@ -1,0 +1,45 @@
+entity_resolution:
+  sources:
+    - name: CORE_ACCT
+      table: silver.acct_customer_clean
+      id_col: customer_id
+      priority: 1
+    - name: CRM
+      table: silver.crm_contact_clean
+      id_col: contact_id
+      priority: 2
+
+  deterministic_rules:
+    - name: DETERMINISTIC_TAX_ID
+      columns: ["tax_id_hash"]
+      require_non_null: true
+    - name: DETERMINISTIC_EMAIL_DOB
+      columns: ["email", "dob"]
+      require_non_null: true
+
+  blocking_keys:
+    - name: block_soundex_dob_year
+      expressions: ["soundex(last_name)", "year(dob)"]
+    - name: block_zip_initial
+      expressions: ["zip5", "substring(first_name, 1, 1)"]
+
+  fuzzy_scoring:
+    weights:
+      full_name_jaro_winkler: 0.35
+      dob_exact: 0.25
+      address_jaro_winkler: 0.20
+      phone_exact: 0.10
+      email_exact: 0.10
+    thresholds:
+      auto_match: 0.88
+      review_queue_min: 0.75
+
+  survivorship:
+    default_strategy: SOURCE_PRIORITY
+    field_overrides:
+      email: MOST_RECENT_NON_NULL
+      phone: MOST_RECENT_NON_NULL
+      address_line1: MOST_RECENT_NON_NULL
+      city: MOST_RECENT_NON_NULL
+      state: MOST_RECENT_NON_NULL
+      zip5: MOST_RECENT_NON_NULL

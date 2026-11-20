@@ -1,0 +1,34 @@
+environment: dev
+catalog: prism_dev
+
+schemas:
+  bronze: bronze
+  silver: silver
+  gold: gold
+  ops: ops
+  ref: ref
+
+storage:
+  landing_zone: "/Volumes/prism_dev/bronze/landing_zone"
+  checkpoint_base: "/Volumes/prism_dev/ops/checkpoints"
+
+synthetic_data:
+  seed: 42
+  scale:
+    clients: 10000
+    households: 6000
+    advisors: 200
+    branches: 15
+    securities: 300
+  noise_rates:
+    nicknames_typos: 0.18
+    missing_contact_info: 0.10
+    stale_crm_address: 0.12
+    crm_duplicates: 0.05
+    crm_orphans: 0.05
+    joint_accounts: 0.20
+    dq_anomalies: 0.015
+
+dq_thresholds:
+  min_pass_rate: 0.98
+  aum_reconciliation_tolerance: 0.0001

@@ -1,0 +1,12 @@
+# Local Python environment
+.venv/
+
+# Python and pytest caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Generated package metadata and build output
+*.egg-info/
+build/
+dist/
