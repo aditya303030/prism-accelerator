@@ -22,6 +22,8 @@ synthetic_data:
     securities: 300
   noise_rates:
     nicknames_typos: 0.18
+    phone_format_variations: 0.15
+    address_format_variations: 0.15
     missing_contact_info: 0.10
     stale_crm_address: 0.12
     crm_duplicates: 0.05
