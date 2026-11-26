@@ -73,6 +73,7 @@ def generate_advisors(config, branches, rngs):
     
     return pd.DataFrame(advisors)
 
+# generate a synthetic reference dataset of investment securities
 def generate_securities(config, rngs):
     fake = rngs["faker"]
     rng = rngs["python"]
@@ -155,10 +156,10 @@ def generate_securities(config, rngs):
         # generating a random company name + Money Market Fund.
         elif asset_class == "Cash":
             security_name = f"{fake.company()} Money Market Fund"
-            # Cash & Equivalent securities use this sector.
+            # cash and equivalent securities use this sector
             sector = "Cash & Equivalents"
 
-        # Generate a fictional alternative investment fund name.
+        # this generates a fictional alternative investment fund name
         else:
             security_name = f"{fake.company()} Alternative Fund"
 
