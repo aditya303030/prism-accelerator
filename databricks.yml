@@ -1,0 +1,14 @@
+bundle:
+  name: prism-accelerator
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://dbc-ffb7b055-68d4.cloud.databricks.com/
+
+  prod:
+    mode: production
+    workspace:
+      host: https://dbc-ffb7b055-68d4.cloud.databricks.com/

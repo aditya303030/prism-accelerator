@@ -62,7 +62,7 @@ def generate_advisors(config, branches, rngs):
             ),
             # assign a random branch to id
             "branch_id": rng.choice(branch_ids),
-            "hire_date": fake.date_betweek(
+            "hire_date": fake.date_between(
                 start_date="-30y",
                 end_date="today"
             ),

@@ -1,4 +1,4 @@
-
+import argparse
 from pathlib import Path
 
 from utilities.config import (
@@ -45,7 +45,7 @@ from generators.source_data import (
 
 def save_dataframes(dataframes, output_directory):
     """
-    Save each DataFrame as a Parquet file in its own table directory.
+    This saves each DataFrame as a parquet file in its own table directory
     """
     output_directory = Path(output_directory)
 
@@ -338,6 +338,8 @@ def generate_synthetic_data(config_path):
         rngs
     )
 
+    print("Minimum account AUM:", accounts["account_aum"].min())
+    print("Negative account AUM:", (accounts["account_aum"] < 0).sum())
     holdings = generate_holdings(
         config,
         accounts,
@@ -493,9 +495,16 @@ def generate_synthetic_data(config_path):
 # -------------------------------------------------------------
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Generate Prism synthetic data."
+    )
 
-    # Locate dev.yml relative to this Python file.
-    project_directory = Path(__file__).resolve().parent
-    config_path = project_directory / "config" / "dev.yml"
+    parser.add_argument(
+        "--config",
+        required=True,
+        help="Path to the YAML configuration file."
+    )
 
-    generate_synthetic_data(config_path)
+    args = parser.parse_args()
+
+    generate_synthetic_data(args.config)

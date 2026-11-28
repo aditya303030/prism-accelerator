@@ -1,3 +1,4 @@
+
 [build-system]
 requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
@@ -5,10 +6,21 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "prism-accelerator"
 version = "0.1.0"
-requires-python = ">=3.11,<3.12"
-
-[project.optional-dependencies]
-dev = ["pytest", "Faker", "PyYAML", "numpy", "pandas"]
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "Faker==40.63.0",
+    "PyYAML==6.0.3",
+    "numpy==2.4.6",
+    "pandas==3.1.1",
+    "pyarrow",
+    "pytest==9.2.0"
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pyright]
+extraPaths = ["data_gen"]
+
+[tool.databricks.environment]
+environment_version = "5"

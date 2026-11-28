@@ -228,17 +228,17 @@ def generate_account_owners(config, accounts, golden_clients, households, rngs):
     return account_owners_df
 
 
+
 def generate_holdings(config, accounts, securities, rngs):
     rng = rngs["python"]
     fake = rngs["faker"]
 
     if accounts.empty:
         raise ValueError("Cannot generate holdings without accounts")
-    
 
     if securities.empty:
         raise ValueError("Cannot generate holdings without securities")
-    
+
     security_ids = list(securities["security_id"])
 
     # Generate one snapshot date shared by all holdings.
@@ -247,32 +247,34 @@ def generate_holdings(config, accounts, securities, rngs):
         end_date="today"
     )
 
-    # store all holdings in this
+    # Store all holdings in this list.
     holdings = []
 
-    # for each account, get the account AUM, generate a random number of holdings for that account (between 5 and 40)
-    # then select a sample of size min(number_of_holdings, len(security_ids)) from all security_ids 
+    # For each account, get the account AUM and generate a random
+    # number of holdings between 5 and 40.
+    # Then select a sample of securities for that account.
     for _, account in accounts.iterrows():
         account_id = account["account_id"]
         account_aum = float(account["account_aum"])
 
-        # generate between 5 and 40 holdings for each account.
+        # Generate between 5 and 40 holdings for each account.
         number_of_holdings = rng.randint(5, 40)
 
-        # from the security_ids, select either num_of_holdings or len(security_ids) number of security_ids
+        # Select either number_of_holdings or all available securities,
+        # whichever is smaller.
         selected_securities = rng.sample(
             security_ids,
             min(number_of_holdings, len(security_ids))
         )
 
-        # generates random weights for distributing account AUM.
+        # Generate random weights for distributing the account's AUM.
         weights = []
 
         for _ in selected_securities:
             weights.append(rng.uniform(0.01, 1.0))
 
         total_weight = sum(weights)
-        allocated_aum = 0
+        allocated_aum = 0.00
 
         # Loop through each selected security and its index.
         for number, security_id in enumerate(selected_securities):
@@ -297,9 +299,20 @@ def generate_holdings(config, accounts, securities, rngs):
             # For every other security, distribute a portion of the
             # account's AUM based on its randomly generated weight.
             else:
-                market_value = round(
-                    account_aum * weights[number] / total_weight,
+                # Calculate how much AUM is still available.
+                remaining_aum = round(
+                    account_aum - allocated_aum,
                     2
+                )
+
+                # Calculate the holding's weighted allocation.
+                # Never allocate more than the remaining AUM.
+                market_value = min(
+                    round(
+                        account_aum * weights[number] / total_weight,
+                        2
+                    ),
+                    remaining_aum
                 )
 
                 # Track the amount already allocated so the final
@@ -330,7 +343,15 @@ def generate_holdings(config, accounts, securities, rngs):
 
     holdings_df = pd.DataFrame(holdings)
 
+    # Ensure that no holdings have negative market values or quantities.
+    if (holdings_df["market_value"] < 0).any():
+        raise ValueError("Generated holdings contain negative market values.")
+
+    if (holdings_df["quantity"] < 0).any():
+        raise ValueError("Generated holdings contain negative quantities.")
+
     return holdings_df
+
     
 
 

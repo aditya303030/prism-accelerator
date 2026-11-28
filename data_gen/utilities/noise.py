@@ -15,7 +15,7 @@ def _get_sample_indices(df, rate, rng):
     return rng.sample(list(df.index), sample_size)
 
 # introducting typos in the synthetic data
-def introduct_typos(df, column, rate, rngs):
+def introduce_typos(df, column, rate, rngs):
     df = df.copy()
     rng = _get_rng(rngs)
 
